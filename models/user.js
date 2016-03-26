@@ -26,6 +26,11 @@ var UserSchema = new Schema({
             type: String
         }]
     },
+    followers: {
+        type: [{
+            type: String
+        }]
+    },
     salt: {
         type: String
     },

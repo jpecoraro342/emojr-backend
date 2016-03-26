@@ -7,6 +7,7 @@ let bodyParser = require('body-parser');
 let config = require('./config');
 
 var users = require('./routes/user');
+var followers = require('./routes/follower');
 
 var app = express();
 
@@ -17,6 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 
 app.use('/api', users);
+app.use('/api', followers);
 
 module.exports = app;
 
