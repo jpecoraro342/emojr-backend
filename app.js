@@ -4,7 +4,7 @@
 let express = require('express');
 let mongoose = require('mongoose');
 let bodyParser = require('body-parser');
-let config = require('../config');
+let config = require('./config');
 
 var users = require('./routes/users');
 
@@ -14,10 +14,11 @@ var app = express();
 mongoose.connect(config.mongo_url);
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 
-var router = express.Router();
+app.use('/api', users);
 
-app.use('/api', router);
+module.exports = app;
 
 app.listen(config.port, () => {
     console.log("Up and listening! go to http://localhost:3000");

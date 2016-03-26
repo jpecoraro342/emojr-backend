@@ -21,7 +21,7 @@ var UserSchema = new Schema({
         type: String,
         default: ''
     },
-    friends: {
+    following: {
         type: [{
             type: String
         }]

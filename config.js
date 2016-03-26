@@ -1,6 +1,6 @@
 module.exports = {
     "port": process.env.SESSION_SECRET || 3000,
-    "mongo_url": "mongodb://localhost/emojr",
+    "mongo_url": "mongodb://localhost:27017/emojr",
     "sessionCookie": {
         "maxAge": 8640000,
         "httpOnly": true,
