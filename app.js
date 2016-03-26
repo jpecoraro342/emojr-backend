@@ -8,6 +8,7 @@ let config = require('./config');
 
 var users = require('./routes/user');
 var followers = require('./routes/follower');
+var posts = require('./routes/post');
 
 var app = express();
 
@@ -19,6 +20,7 @@ app.use(bodyParser.urlencoded());
 
 app.use('/api', users);
 app.use('/api', followers);
+app.use('/api', posts);
 
 module.exports = app;
 

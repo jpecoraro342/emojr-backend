@@ -2,7 +2,7 @@ var User = require('../models/user');
 var express = require('express');
 var router = express.Router();
 
-router.route('/user')
+router.route('/users')
 	.get(function(req, res) {
 		User.find({})
 		.select("-password")
@@ -15,6 +15,8 @@ router.route('/user')
 			res.json(users);
 		});
 	})
+
+router.route('/user')
 	.post(function(req, res) {
 		var user = new User(req.body);
 
