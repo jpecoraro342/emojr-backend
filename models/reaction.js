@@ -8,11 +8,15 @@ let Schema = mongoose.Schema;
  * Reaction Schema
  */
 var ReactionSchema = new Schema({
-    user: {
-        type: String,
+    username: {
+        type: String
+    },
+    post: {
+        type: Schema.Types.ObjectId,
+        ref: 'Post'
     },
     reaction: {
-        type: String,
+        type: String
     },
     updated: {
         type: Date

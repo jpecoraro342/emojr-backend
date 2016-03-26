@@ -1,4 +1,5 @@
 var Post = require('../models/post');
+var Reaction = require('../models/reaction');
 var User = require('../models/user');
 var mongoose = require('mongoose');
 var express = require('express');
@@ -9,6 +10,7 @@ var router = express.Router();
 router.route('/posts')
 	.get(function(req, res) {
 		Post.find({})
+		.populate('reactions', 'username reaction created')
 		.populate('user', 'username fullname')
 		.exec(function(err, posts) {
 			if (err) {
