@@ -6,7 +6,7 @@ let mongoose = require('mongoose');
 let bodyParser = require('body-parser');
 let config = require('./config');
 
-var users = require('./routes/users');
+var users = require('./routes/user');
 
 var app = express();
 
