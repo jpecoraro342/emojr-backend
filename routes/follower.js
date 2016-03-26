@@ -3,7 +3,7 @@ var express = require('express');
 var _ = require('lodash');
 var router = express.Router();
 
-router.route('/followers/:userid')
+router.route('/following/:userid')
 	.get(function(req, res) {
 		User.findById(req.params.userid)
         .populate('following', '-password -salt')
@@ -15,6 +15,23 @@ router.route('/followers/:userid')
                 return res.send(user.following);
             }
             
+           	res.status(403).send({ message : "user not found" });
+            
+        });
+	})
+
+router.route('/followers/:userid')
+	.get(function(req, res) {
+		User.findById(req.params.userid)
+        .populate('followers', '-password -salt')
+        .exec(function (err, user) {
+            if (err) {
+                return res.send(err);
+            }
+            if (user) {
+                return res.send(user.followers);
+            }
+
            	res.status(403).send({ message : "user not found" });
             
         });
