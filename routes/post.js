@@ -1,11 +1,15 @@
 var Post = require('../models/post');
 var User = require('../models/user');
+var mongoose = require('mongoose');
 var express = require('express');
 var router = express.Router();
+
+// TODO: populate the reactions
 
 router.route('/posts')
 	.get(function(req, res) {
 		Post.find({})
+		.populate('user', 'username fullname')
 		.exec(function(err, posts) {
 			if (err) {
 				return res.send(err);
@@ -14,6 +18,8 @@ router.route('/posts')
 			res.send(posts);
 		});
 	})
+
+router.route('/post')
 	.post(function(req, res) {
 		var post = new Post(req.body);
 
@@ -29,6 +35,7 @@ router.route('/posts')
 router.route('/post/:postid')
 	.get(function(req, res) {
 		Post.findById(req.params.postid)
+		.populate('user', 'username fullname')
 		.exec(function(err, post) {
 			if (err) {
 				return res.send(err);
@@ -40,7 +47,9 @@ router.route('/post/:postid')
 
 router.route('/posts/user/:userid')
 	.get(function(req, res) {
-		Post.find({userId: req.params.userid})
+		Post.find({})
+		.where('user').equals(mongoose.Types.ObjectId(req.params.userid))
+		.populate('user', 'username fullname')
 		.exec(function(err, post) {
 			if (err) {
 				return res.send(err);
@@ -59,7 +68,8 @@ router.route('/posts/following/:userid')
             }
             if (user) {
                 Post.find()
-                .where('userId').in(user.following)
+                .where('user').in(user.following)
+                .populate('user', 'username fullname')
 				.exec(function(err, posts) {
 					if (err) {
 						return res.send(err);

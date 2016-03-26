@@ -17,18 +17,23 @@ var UserSchema = new Schema({
         lowercase: true,
         trim: true
     },
+    fullname: {
+        type: String
+    },
     password: {
         type: String,
         default: ''
     },
     following: {
         type: [{
-            type: String
+            type: Schema.Types.ObjectId,
+            ref: 'User'
         }]
     },
     followers: {
         type: [{
-            type: String
+            type: Schema.Types.ObjectId,
+            ref: 'User'
         }]
     },
     salt: {

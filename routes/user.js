@@ -86,15 +86,3 @@ router.route('/user/signin')
 	});
 
 module.exports = router;
-
-	// User.find({}, {
-	// 	_id: true,
-	// 	username: true,
-	// 	fullname: true
-	// }).exec(function(err, users) {
-	// 	if (err) {
-	// 		return res.send(err);
-	// 	}
-
-	// 	res.json(users);
-	// });

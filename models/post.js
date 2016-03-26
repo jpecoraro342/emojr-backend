@@ -8,15 +8,17 @@ let Schema = mongoose.Schema;
  * Post Schema
  */
 var PostSchema = new Schema({
-    userId: {
-        type: String,
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     post: {
-        type: String,
+        type: String
     },
     reactions: {
         type: [{
-            type: String
+            type: Schema.Types.ObjectId,
+            ref: 'Reaction'
         }]
     },
     updated: {
