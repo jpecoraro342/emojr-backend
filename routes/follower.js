@@ -67,7 +67,7 @@ router.route('/follow')
 										return res.send(err);
 									}
 
-									return res.send( { following: user.following, followers: followUser.followers });
+									return res.send( { success: true, following: user.following, followers: followUser.followers });
 								});
 			            	}
 						});
