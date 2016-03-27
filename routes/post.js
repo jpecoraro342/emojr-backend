@@ -71,6 +71,7 @@ router.route('/posts/following/:userid')
             if (user) {
                 Post.find()
                 .where('user').in(user.following)
+                .populate('reactions', 'username reaction created')
                 .populate('user', 'username fullname')
 				.exec(function(err, posts) {
 					if (err) {
