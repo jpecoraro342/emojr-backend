@@ -30,7 +30,14 @@ router.route('/post')
 				return res.send(err);
 			}
 
-			res.send(post);
+			Post.populate(post, {path:"user"}, function(err, post) {
+				if (err) {
+					return res.send(err);
+				}
+				else {
+					res.send(post);
+				}
+			});
 		});
 	});
 
