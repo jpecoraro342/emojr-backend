@@ -1,0 +1,7 @@
+DROP TABLE Followers;
+DROP TABLE UserRoles;
+DROP TABLE Roles;
+DROP TABLE Reactions;
+DROP TABLE Posts;
+DROP TABLE Users;
+
