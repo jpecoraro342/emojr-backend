@@ -5,65 +5,68 @@ var router = express.Router();
 
 router.route('/users')
 	.get(function(req, res) {
-		User.find({})
-		.select("-password")
-		.select("-salt")
-		.exec(function(err, users) {
-			if (err) {
-				return res.send(err);
-			}
+		var queryString = "SELECT Users.pk_userid, Users.username, Users.userfullname FROM Users;";
 
-			res.json(users);
+		pgquery.query(queryString, null, function(err, result){
+			if (err) {
+				console.log(err);
+				return res.status(500).send(err);
+			}
+			else {
+				return res.send(result.rows);
+			}
 		});
 	})
 
 router.route('/user')
 	.post(function(req, res) {
 		var user = new User(req.body);
+		var queryString = "INSERT INTO Users (username, userfullname, password, salt) VALUES ($1::text, $2::text, $3::text, $4::text) RETURNING Users.pk_userid, Users.username, Users.userfullname;"
+		
+		user.presave();
 
-		user.save(function(err) {
+		pgquery.query(queryString, [user.username, user.userfullname, user.password, user.salt], function(err, result){
 			if (err) {
-				return res.send(err);
+				console.log(err);
+				return res.status(500).send(err);
 			}
-
-			user.password = undefined;
-			user.salt = undefined;
-
-			res.send(user);
+			else {
+				return res.send(result.rows[0]);
+			}
 		});
 	});
 
 router.route('/user/available')
 	.post(function(req, res) {
-		User.findOne({
-            username: req.body.username
-        }, (err, user) => {
-            if (err) {
-                return res.send(err);
-            }
-            if (user) {
-                return res.send({ available: false});
-            }
-
-            res.send({available: true});
-        });
+		var queryString = "SELECT Users.username FROM Users WHERE Users.username=$1;";
+		pgquery.query(queryString, [req.body.username], function(err, result){
+			if (err) {
+				console.log(err);
+				return res.status(500).send(err);
+			}
+			else {
+				if (result.rowCount > 0) {
+					return res.send({ available: false});
+				}
+				return res.send({available: true});
+			}
+		});
 	});
 
 router.route('/user/signup')
 	.post(function(req, res) {
 		var user = new User(req.body);
-		var queryString = "INSERT INTO Users (username, userfullname, password, salt) VALUES ($1::text, $2::text, $3::text, $4::text);"
+		var queryString = "INSERT INTO Users (username, userfullname, password, salt) VALUES ($1::text, $2::text, $3::text, $4::text) RETURNING Users.pk_userid, Users.username, Users.userfullname;";
 		
 		user.presave();
 
 		pgquery.query(queryString, [user.username, user.userfullname, user.password, user.salt], function(err, result){
-			console.log(err);
-			console.log(result);
 			if (err) {
+				console.log(err);
 				return res.status(500).send(err);
 			}
 			else {
-				return res.send(result);
+				return res.send(result.rows[0]);
 			}
 		});
 	});
