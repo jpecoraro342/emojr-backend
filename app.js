@@ -3,6 +3,7 @@
 
 let express = require('express');
 let mongoose = require('mongoose');
+let pg = require('pg');
 let bodyParser = require('body-parser');
 let config = require('./config');
 

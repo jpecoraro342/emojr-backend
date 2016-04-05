@@ -1,6 +1,7 @@
 module.exports = {
     "port": process.env.PORT || 3000,
     "mongo_url": "mongodb://testuser:test@ds025379.mlab.com:25379/emojr",
+    "postgres_url": "postgres://localhost/emojr",
     "sessionCookie": {
         "maxAge": 8640000,
         "httpOnly": true,

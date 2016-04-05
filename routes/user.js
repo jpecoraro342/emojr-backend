@@ -1,4 +1,5 @@
 var User = require('../models/user');
+var pgquery = require('../pgquery');
 var express = require('express');
 var router = express.Router();
 
@@ -51,16 +52,19 @@ router.route('/user/available')
 router.route('/user/signup')
 	.post(function(req, res) {
 		var user = new User(req.body);
+		var queryString = "INSERT INTO Users (username, userfullname, password, salt) VALUES ($1::text, $2::text, $3::text, $4::text);"
+		
+		user.presave();
 
-		user.save(function(err) {
+		pgquery.query(queryString, [user.username, user.userfullname, user.password, user.salt], function(err, result){
+			console.log(err);
+			console.log(result);
 			if (err) {
-				return res.send(err);
+				return res.status(500).send(err);
 			}
-
-			user.password = undefined;
-			user.salt = undefined;
-
-			res.send(user);
+			else {
+				return res.send(result);
+			}
 		});
 	});
 

@@ -6,72 +6,32 @@ let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
 
-/**
- * User Schema
- */
-var UserSchema = new Schema({
-    username: {
-        type: String,
-        unique: 'Username already exists',
-        required: 'Please fill in a username',
-        lowercase: true,
-        trim: true
-    },
-    fullname: {
-        type: String
-    },
-    password: {
-        type: String,
-        default: ''
-    },
-    following: {
-        type: [{
-            type: Schema.Types.ObjectId,
-            ref: 'User'
-        }]
-    },
-    followers: {
-        type: [{
-            type: Schema.Types.ObjectId,
-            ref: 'User'
-        }]
-    },
-    salt: {
-        type: String
-    },
-    roles: {
-        type: [{
-            type: String,
-            enum: ['user', 'admin']
-        }],
-        default: ['user'],
-        required: 'Please provide at least one role'
-    },
-    updated: {
-        type: Date
-    },
-    created: {
-        type: Date,
-        default: Date.now
-    }
-});
+function User(json) {
+    var _this = this;
 
-/**
- * Hook a pre save method to hash the password
- */
-UserSchema.pre('save', function(next) {
-    if (this.password && this.isModified('password')) {
+    this.pk_userid = json.pk_userid;
+    this.username = json.username;
+    this.userfullname = json.fullname;
+    this.password = json.password;
+    this.salt = json.salt;
+    this.email = json.email;
+
+    if (this.userfullname == null) {
+        this.userfullname = json.fullname;
+    }
+}
+
+User.prototype.presave = function() {
+    if (this.password) {
         this.salt = crypto.randomBytes(16).toString('base64');
         this.password = this.hashPassword(this.password);
     }
-
-    next();
-});
+}
 
 /**
  * Create instance method for hashing a password
  */
-UserSchema.methods.hashPassword = function(password) {
+User.prototype.hashPassword = function(password) {
     if (this.salt && password) {
         return crypto.pbkdf2Sync(password, new Buffer(this.salt, 'base64'), 10000, 64).toString('base64');
     } else {
@@ -82,8 +42,8 @@ UserSchema.methods.hashPassword = function(password) {
 /**
  * Create instance method for authenticating user
  */
-UserSchema.methods.authenticate = function(password) {
+User.prototype.authenticate = function(password) {
     return this.password === this.hashPassword(password);
 };
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = User;
