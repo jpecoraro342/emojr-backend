@@ -58,8 +58,8 @@ router.route('/posts/user/:userid')
 	.get(function(req, res) {
 		Post.find({})
 		.where('user').equals(mongoose.Types.ObjectId(req.params.userid))
+        .populate('reactions', 'username reaction created')
 		.populate('user', 'username fullname')
-        .populate('reactions')
 		.exec(function(err, post) {
 			if (err) {
 				return res.send(err);
