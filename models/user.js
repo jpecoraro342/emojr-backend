@@ -4,16 +4,16 @@ let crypto = require('crypto');
 let validator = require('validator');
 
 
-function User(json) {
-    this.pk_userid = json.pk_userid;
-    this.username = json.username;
-    this.userfullname = json.fullname;
-    this.password = json.password;
-    this.salt = json.salt;
-    this.email = json.email;
+function User(attributes) {
+    this.pk_userid = attributes.pk_userid;
+    this.username = attributes.username;
+    this.userfullname = attributes.fullname;
+    this.password = attributes.password;
+    this.salt = attributes.salt;
+    this.email = attributes.email;
 
     if (this.userfullname == null) {
-        this.userfullname = json.fullname;
+        this.userfullname = attributes.fullname;
     }
 }
 

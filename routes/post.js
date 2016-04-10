@@ -8,11 +8,24 @@ var router = express.Router();
 
 router.route('/posts')
 	.get(function(req, res) {
-		var queryString = "SELECT Posts.fk_userid, Posts.pk_postid, Posts.post FROM Posts;";
+		/* var queryString = "SELECT Users.pk_userid, Users.username, Posts.pk_postid, Posts.post, Reactions.pk_reactionid, Reactions.reaction\n" + 
+						"FROM Posts\n" + 
+						"INNER JOIN Reactions\n" + 
+						"ON Posts.pk_postid = Reactions.fk_postid\n" + 
+						"INNER JOIN Users\n" + 
+						"ON Posts.fk_userid = Users.pk_userid;"; */
+
+		var queryString = "SELECT Users.pk_userid, Users.username, Posts.pk_postid, Posts.post, Posts.created, Posts.lastmodified,\n" +
+						"json_agg((SELECT r FROM (SELECT Reactions.pk_reactionid, Reactions.reaction) r)) as reactions\n" +
+						"FROM Posts\n" +
+						"INNER JOIN Reactions ON Posts.pk_postid = Reactions.fk_postid\n" +
+						"INNER JOIN Users ON Posts.fk_userid = Users.pk_userid\n" +
+						"GROUP BY Posts.pk_postid, Users.pk_userid, Users.username;"
 
 		pgquery.query(queryString, null, function(err, result){
 			if (err) {
 				console.log(err);
+				console.log(queryString);
 				return res.status(500).send(err);
 			}
 			else {
@@ -25,8 +38,8 @@ router.route('/post')
 	.post(function(req, res) {
 		var post = new Post(req.body);
 		var queryString = "INSERT INTO Posts (fk_userid, post)\n" + 
-		"VALUES ($1, $2)\n" + 
-		"RETURNING Posts.pk_postid, Posts.fk_userid, Posts.post;"
+						"VALUES ($1, $2)\n" + 
+						"RETURNING Posts.pk_postid, Posts.fk_userid, Posts.post;"
 		
 		pgquery.query(queryString, [post.fk_userid, post.post], function(err, result){
 			if (err) {
