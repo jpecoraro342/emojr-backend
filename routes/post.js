@@ -8,19 +8,7 @@ var router = express.Router();
 
 router.route('/posts')
 	.get(function(req, res) {
-		/* var queryString = "SELECT Users.pk_userid, Users.username, Posts.pk_postid, Posts.post, Reactions.pk_reactionid, Reactions.reaction\n" + 
-						"FROM Posts\n" + 
-						"INNER JOIN Reactions\n" + 
-						"ON Posts.pk_postid = Reactions.fk_postid\n" + 
-						"INNER JOIN Users\n" + 
-						"ON Posts.fk_userid = Users.pk_userid;"; */
-
-		var queryString = "SELECT Users.pk_userid, Users.username, Posts.pk_postid, Posts.post, Posts.created, Posts.lastmodified,\n" +
-						"json_agg((SELECT r FROM (SELECT Reactions.pk_reactionid, Reactions.reaction) r)) as reactions\n" +
-						"FROM Posts\n" +
-						"INNER JOIN Reactions ON Posts.pk_postid = Reactions.fk_postid\n" +
-						"INNER JOIN Users ON Posts.fk_userid = Users.pk_userid\n" +
-						"GROUP BY Posts.pk_postid, Users.pk_userid, Users.username;"
+		var queryString = postQuery();
 
 		pgquery.query(queryString, null, function(err, result){
 			if (err) {
@@ -54,29 +42,33 @@ router.route('/post')
 
 router.route('/post/:postid')
 	.get(function(req, res) {
-		Post.findById(req.params.postid)
-		.populate('user', 'username fullname')
-		.exec(function(err, post) {
-			if (err) {
-				return res.send(err);
-			}
+		var queryString = postQuery("WHERE Posts.pk_postid=$1");
 
-			res.send(post);
+		pgquery.query(queryString, [req.params.postid], function(err, result){
+			if (err) {
+				console.log(err);
+				console.log(queryString);
+				return res.status(500).send(err);
+			}
+			else {
+				return res.send(result.rows);
+			}
 		});
 	})
 
 router.route('/posts/user/:userid')
 	.get(function(req, res) {
-		Post.find({})
-		.where('user').equals(mongoose.Types.ObjectId(req.params.userid))
-        .populate('reactions', 'username reaction created')
-		.populate('user', 'username fullname')
-		.exec(function(err, post) {
-			if (err) {
-				return res.send(err);
-			}
+		var queryString = postQuery("WHERE Posts.fk_userid=$1");
 
-			res.send(post);
+		pgquery.query(queryString, [req.params.userid], function(err, result){
+			if (err) {
+				console.log(err);
+				console.log(queryString);
+				return res.status(500).send(err);
+			}
+			else {
+				return res.send(result.rows);
+			}
 		});
 	})
 
@@ -105,6 +97,26 @@ router.route('/posts/following/:userid')
             }
         });
 	})
+
+function postQuery(additionalQuery) {
+	if (additionalQuery == null) {
+		return basePostsQuery() + postGrouping() + ";";
+	}
+
+	return basePostsQuery() + additionalQuery + "\n" + postGrouping() + ";";
+}
+
+function basePostsQuery() {
+	return "SELECT Users.pk_userid, Users.username, Posts.pk_postid, Posts.post, Posts.created, Posts.lastmodified,\n" +
+		"json_agg((SELECT r FROM (SELECT Reactions.pk_reactionid, Reactions.reaction) r)) as reactions\n" +
+		"FROM Posts\n" +
+		"INNER JOIN Reactions ON Posts.pk_postid = Reactions.fk_postid\n" +
+		"INNER JOIN Users ON Posts.fk_userid = Users.pk_userid\n";
+}
+
+function postGrouping() {
+	return "GROUP BY Posts.pk_postid, Users.pk_userid, Users.username";
+}
 
 
 module.exports = router;
