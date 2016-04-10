@@ -1,30 +1,18 @@
 'use strict';
 
-let mongoose = require('mongoose');
-let Schema = mongoose.Schema;
+function Reaction(attributes) {
+    this.pk_reactionid = attributes.pk_reactionid;
+    this.fk_userid = attributes.fk_userid;
+    this.fk_postid = attributes.fk_postid;
+    this.reaction = attributes.reaction;
 
-
-/**
- * Reaction Schema
- */
-var ReactionSchema = new Schema({
-    username: {
-        type: String
-    },
-    post: {
-        type: Schema.Types.ObjectId,
-        ref: 'Post'
-    },
-    reaction: {
-        type: String
-    },
-    updated: {
-        type: Date
-    },
-    created: {
-        type: Date,
-        default: Date.now
+    if (this.fk_userid == null) {
+        this.fk_userid = attributes.userid;
     }
-});
 
-module.exports = mongoose.model('Reaction', ReactionSchema);
+    if (this.fk_postid == null) {
+        this.fk_postid = attributes.postid;
+    }
+}
+
+module.exports = Reaction;

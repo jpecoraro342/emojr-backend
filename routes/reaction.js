@@ -3,75 +3,81 @@ var Post = require('../models/post');
 var User = require('../models/user');
 var mongoose = require('mongoose');
 var express = require('express');
+var pgquery = require('../pgquery');
 var router = express.Router();
 
 router.route('/reactions')
 	.get(function(req, res) {
-		Reaction.find({})
-		.exec(function(err, reactions) {
-			if (err) {
-				return res.send(err);
-			}
+		var queryString = "SELECT * FROM Reactions;";
 
-			res.send(reactions);
+		pgquery.query(queryString, null, function(err, result){
+			if (err) {
+				console.log(err);
+				return res.status(500).send(err);
+			}
+			else {
+				return res.send(result.rows);
+			}
 		});
 	})
 
 router.route('/reaction')
 	.post(function(req, res) {
-		Post.findById(req.body.post)
-		.exec(function(err, post) {
+		var reaction = new Reaction(req.body);
+		var queryString = "INSERT INTO Reactions (fk_userid, fk_postid, reaction)\n" + 
+		"VALUES ($1, $2, $3)\n" + 
+		"RETURNING Reactions.pk_reactionid, Reactions.fk_userid, Reactions.fk_postid;"
+		
+		pgquery.query(queryString, [reaction.fk_userid, reaction.fk_postid, reaction.reaction], function(err, result){
 			if (err) {
-				return res.send(err);
-			}
-
-			if (post) {
-				var reaction = new Reaction(req.body);
-
-	    		reaction.save(function(err) {
-					if (err) {
-						return res.send(err);
-					}
-
-					post.reactions.push(reaction._id);
-					post.save(function(err) {
-						if (err) {
-							return res.send(err);
-						}
-
-						res.send(reaction);
-					});
-				});
+				console.log(err);
+				return res.status(500).send(err);
 			}
 			else {
-				res.status(403).send({ message : "post not found" });
+				return res.send(result.rows[0]);
 			}
-
 		});
 	});
 
 router.route('/reaction/:reactionid')
 	.get(function(req, res) {
-		Reaction.findById(req.params.reactionid)
-		.exec(function(err, reaction) {
+		var queryString = "SELECT * FROM Reactions where pk_reactionid=$1;"
+		pgquery.query(queryString, [req.params.reactionid], function(err, result){
 			if (err) {
-				return res.send(err);
+				console.log(err);
+				return res.status(500).send(err);
 			}
-
-			res.send(reaction);
+			else {
+				return res.send(result.rows[0]);
+			}
 		});
 	})
 
-router.route('/reactions/user/:username')
+router.route('/reactions/user/:userid')
 	.get(function(req, res) {
-		Reaction.find({})
-		.where('user').equals(req.params.username)
-		.exec(function(err, reaction) {
+		var queryString = "SELECT * FROM Reactions where fk_userid=$1;"
+		pgquery.query(queryString, [req.params.userid], function(err, result){
 			if (err) {
-				return res.send(err);
+				console.log(err);
+				return res.status(500).send(err);
 			}
+			else {
+				return res.send(result.rows[0]);
+			}
+		});
+	})
 
-			res.send(reaction);
+router.route('/reactions/post/:postid')
+	.get(function(req, res) {
+		var queryString = "SELECT * FROM Reactions where fk_postid=$1;"
+		pgquery.query(queryString, [req.params.postid], function(err, result){
+			if (err) {
+				console.log(err);
+				return res.status(500).send(err);
+			}
+			else {
+				return res.send(result.rows[0]);
+			}
 		});
 	})
 
