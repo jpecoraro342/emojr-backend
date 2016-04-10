@@ -1,43 +1,41 @@
 var Post = require('../models/post');
 var Reaction = require('../models/reaction');
 var User = require('../models/user');
+var pgquery = require('../pgquery');
 var mongoose = require('mongoose');
 var express = require('express');
 var router = express.Router();
 
-// TODO: populate the reactions
-
 router.route('/posts')
 	.get(function(req, res) {
-		Post.find({})
-		.populate('reactions', 'username reaction created')
-		.populate('user', 'username fullname')
-		.exec(function(err, posts) {
-			if (err) {
-				return res.send(err);
-			}
+		var queryString = "SELECT Posts.fk_userid, Posts.pk_postid, Posts.post FROM Posts;";
 
-			res.send(posts);
+		pgquery.query(queryString, null, function(err, result){
+			if (err) {
+				console.log(err);
+				return res.status(500).send(err);
+			}
+			else {
+				return res.send(result.rows);
+			}
 		});
 	})
 
 router.route('/post')
 	.post(function(req, res) {
 		var post = new Post(req.body);
-
-		post.save(function(err) {
+		var queryString = "INSERT INTO Posts (fk_userid, post)\n" + 
+		"VALUES ($1, $2)\n" + 
+		"RETURNING Posts.pk_postid, Posts.fk_userid, Posts.post;"
+		
+		pgquery.query(queryString, [post.fk_userid, post.post], function(err, result){
 			if (err) {
-				return res.send(err);
+				console.log(err);
+				return res.status(500).send(err);
 			}
-
-			Post.populate(post, {path:"user"}, function(err, post) {
-				if (err) {
-					return res.send(err);
-				}
-				else {
-					res.send(post);
-				}
-			});
+			else {
+				return res.send(result.rows[0]);
+			}
 		});
 	});
 

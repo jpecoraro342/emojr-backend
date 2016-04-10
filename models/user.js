@@ -2,13 +2,9 @@
 
 let crypto = require('crypto');
 let validator = require('validator');
-let mongoose = require('mongoose');
-let Schema = mongoose.Schema;
 
 
 function User(json) {
-    var _this = this;
-
     this.pk_userid = json.pk_userid;
     this.username = json.username;
     this.userfullname = json.fullname;
