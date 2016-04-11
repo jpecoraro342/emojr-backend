@@ -24,6 +24,7 @@ router.route('/posts')
 router.route('/post')
 	.post(function(req, res) {
 		var post = new Post(req.body);
+		console.log(post);
 		var queryString = "INSERT INTO Posts (fk_userid, post)\n" + 
 						"VALUES ($1, $2)\n" + 
 						"RETURNING Posts.pk_postid, Posts.fk_userid, Posts.post;"
