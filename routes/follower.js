@@ -1,80 +1,71 @@
 var User = require('../models/user');
 var express = require('express');
-var _ = require('lodash');
+var pgquery = require('../pgquery');
 var router = express.Router();
 
 router.route('/following/:userid')
 	.get(function(req, res) {
-		User.findById(req.params.userid)
-        .populate('following', '-password -salt')
-        .exec(function (err, user) {
+		var queryString = "SELECT Users.pk_userid, Users.username, Users.userfullname\n" +  
+                        "FROM Followers\n" + 
+                        "INNER JOIN Users\n" + 
+                        "ON Followers.fk_followinguserid=Users.pk_userid\n" +
+                        "WHERE Followers.fk_followeruserid=$1";
+
+        pgquery.query(queryString, [req.params.userid], function(err, result){
             if (err) {
-                return res.send(err);
+                console.log(err);
+                return res.status(500).send(err);
             }
-            if (user) {
-                return res.send(user.following);
+            else {
+                return res.send(result.rows);
             }
-            
-           	res.status(403).send({ message : "user not found" });
-            
         });
 	})
 
 router.route('/followers/:userid')
 	.get(function(req, res) {
-		User.findById(req.params.userid)
-        .populate('followers', '-password -salt')
-        .exec(function (err, user) {
+		var queryString = "SELECT Users.pk_userid, Users.username, Users.userfullname\n" +  
+                        "FROM Followers\n" + 
+                        "INNER JOIN Users\n" + 
+                        "ON Followers.fk_followeruserid=Users.pk_userid\n" +
+                        "WHERE Followers.fk_followinguserid=$1";
+        pgquery.query(queryString, [req.params.userid], function(err, result){
             if (err) {
-                return res.send(err);
+                console.log(err);
+                return res.status(500).send(err);
             }
-            if (user) {
-                return res.send(user.followers);
+            else {
+                return res.send(result.rows);
             }
-
-           	res.status(403).send({ message : "user not found" });
-            
         });
 	})
 
 router.route('/follow')
-	.post(function(req, res) {
-		User.findById(req.body.userid, function(err, user) {
+    .get(function(req, res) {
+        var queryString = "SELECT * FROM Followers;";
+
+        pgquery.query(queryString, function(err, result){
             if (err) {
-                return res.send(err);
+                console.log(err);
+                return res.status(500).send(err);
             }
-            if (user) {
-            	if (_.includes(user.following, req.body.followUserId)) {
-            		return res.send( { success: false, message: "already following user"});
-            	}
-            	else {
-					user.following.push(req.body.followUserId);
-
-	                user.save(function(err) {
-						if (err) {
-							return res.send(err);
-						}
-
-						User.findById(req.body.followUserId, function (err, followUser) {
-							if (_.includes(followUser.followers, req.body.userid)) {
-			            		return res.send( { success: false, message: "user already has you in their followers list"});
-			            	}
-			            	else {
-								followUser.followers.push(req.body.userid);
-
-				                followUser.save(function(err) {
-									if (err) {
-										return res.send(err);
-									}
-
-									return res.send( { success: true, following: user.following, followers: followUser.followers });
-								});
-			            	}
-						});
-					});
-            	}
-            } else {
-            	res.send( { success: false, message: "user not found"});
+            else {
+                return res.send(result.rows);
+            }
+        });
+    })
+	.post(function(req, res) {
+        var queryString = "INSERT INTO Followers (fk_followeruserid, fk_followinguserid)\n" + 
+                        "VALUES ($1, $2)\n" + 
+                        "RETURNING Followers.fk_followeruserid, Followers.fk_followinguserid;"
+        
+        pgquery.query(queryString, [req.body.followerUserId, req.body.followingUserId], function(err, result){
+            if (err) {
+                console.log(err);
+                return res.status(500).send(err);
+            }
+            else {
+                return res.send(result.rows[0]);
             }
         });
 	})
