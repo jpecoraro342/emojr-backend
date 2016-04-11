@@ -98,7 +98,9 @@ function postQuery(additionalQuery) {
 
 function basePostsQuery() {
 	return "SELECT Users.pk_userid, Users.username, Posts.pk_postid, Posts.post, Posts.created, Posts.lastmodified,\n" +
-		"JSON_AGG((SELECT r FROM (SELECT Reactions.pk_reactionid, Reactions.reaction) r)) as reactions\n" +
+		"COALESCE (\n" +
+		"json_agg((SELECT r FROM (SELECT Reactions.pk_reactionid, Reactions.reaction) r))\n" +
+		"FILTER (WHERE Reactions.pk_reactionid IS NOT NULL), '[]') as reactions\n" +
 		"FROM Posts\n" +
 		"LEFT JOIN Reactions ON Posts.pk_postid = Reactions.fk_postid\n" +
 		"INNER JOIN Users ON Posts.fk_userid = Users.pk_userid\n";
