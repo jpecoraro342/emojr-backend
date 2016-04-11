@@ -2,7 +2,6 @@
 /*global require, __dirname*/
 
 let express = require('express');
-let mongoose = require('mongoose');
 let pg = require('pg');
 let bodyParser = require('body-parser');
 let config = require('./config');
@@ -13,9 +12,6 @@ var posts = require('./routes/post');
 var reactions = require('./routes/reaction');
 
 var app = express();
-
-// Connect to database.
-mongoose.connect(config.mongo_url);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());

@@ -2,7 +2,6 @@ var Post = require('../models/post');
 var Reaction = require('../models/reaction');
 var User = require('../models/user');
 var pgquery = require('../pgquery');
-var mongoose = require('mongoose');
 var express = require('express');
 var router = express.Router();
 
