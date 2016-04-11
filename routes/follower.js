@@ -29,6 +29,7 @@ router.route('/followers/:userid')
                         "INNER JOIN Users\n" + 
                         "ON Followers.fk_followeruserid=Users.pk_userid\n" +
                         "WHERE Followers.fk_followinguserid=$1";
+
         pgquery.query(queryString, [req.params.userid], function(err, result){
             if (err) {
                 console.log(err);
@@ -44,7 +45,7 @@ router.route('/follow')
     .get(function(req, res) {
         var queryString = "SELECT * FROM Followers;";
 
-        pgquery.query(queryString, function(err, result){
+        pgquery.query(queryString, null, function(err, result){
             if (err) {
                 console.log(err);
                 return res.status(500).send(err);
