@@ -16,7 +16,7 @@ router.route('/users')
 				return res.send(result.rows);
 			}
 		});
-	})
+	});
 
 router.route('/user')
 	.post(function(req, res) {
@@ -77,23 +77,28 @@ router.route('/user/signup')
 
 router.route('/user/signin')
 	.post(function(req, res) {
-		User.findOne({
-            username: req.body.username
-        }, (err, user) => {
-            if (err) {
-                return res.send(err);
-            }
-            if (!user || !user.authenticate(req.body.password)) {
-                return res.status(403).send({
+		var queryString = "SELECT * FROM Users WHERE Users.username=$1;";
+		pgquery.query(queryString, [req.body.username], function(err, result){
+			if (err) {
+				console.log(err);
+				return res.status(500).send(err);
+			}
+			else {
+				if (result.rowCount > 0) {
+					var user = new User(result.rows[0]);
+
+					if (user.authenticate(req.body.password)) {
+						user.password = undefined;
+						user.salt = undefined;
+						return res.send(user);
+					}
+				}
+
+				return res.status(403).send({
                 	message: 'Invalid username or password'
                 });
-            }
-
-            user.password = undefined;
-            user.salt = undefined;
-
-            res.send(user);
-        });
+			}
+		});
 	});
 
 module.exports = router;

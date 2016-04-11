@@ -7,7 +7,7 @@ let validator = require('validator');
 function User(attributes) {
     this.pk_userid = attributes.pk_userid;
     this.username = attributes.username;
-    this.userfullname = attributes.fullname;
+    this.userfullname = attributes.userfullname;
     this.password = attributes.password;
     this.salt = attributes.salt;
     this.email = attributes.email;

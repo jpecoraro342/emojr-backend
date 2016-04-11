@@ -57,7 +57,7 @@ router.route('/follow')
 	.post(function(req, res) {
         var queryString = "INSERT INTO Followers (fk_followeruserid, fk_followinguserid)\n" + 
                         "VALUES ($1, $2)\n" + 
-                        "RETURNING Followers.fk_followeruserid, Followers.fk_followinguserid;"
+                        "RETURNING Followers.fk_followeruserid, Followers.fk_followinguserid;";
         
         pgquery.query(queryString, [req.body.followerUserId, req.body.followingUserId], function(err, result){
             if (err) {
@@ -69,5 +69,19 @@ router.route('/follow')
             }
         });
 	})
+    .delete(function(req, res) {
+        var queryString = "DELETE FROM Followers\n" +  
+                        "WHERE Followers.fk_followeruserid=$1 AND Followers.fk_followinguserid=$2;";
+
+        pgquery.query(queryString, [req.body.followerUserId, req.body.followingUserId], function(err, result){
+            if (err) {
+                console.log(err);
+                return res.status(500).send(err);
+            }
+            else {
+                return res.send(result.rows[0]);
+            }
+        });
+    })
 
 module.exports = router;

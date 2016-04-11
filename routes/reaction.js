@@ -18,7 +18,7 @@ router.route('/reactions')
 				return res.send(result.rows);
 			}
 		});
-	})
+	});
 
 router.route('/reaction')
 	.post(function(req, res) {
@@ -50,7 +50,7 @@ router.route('/reaction/:reactionid')
 				return res.send(result.rows[0]);
 			}
 		});
-	})
+	});
 
 router.route('/reactions/user/:userid')
 	.get(function(req, res) {
@@ -64,7 +64,7 @@ router.route('/reactions/user/:userid')
 				return res.send(result.rows);
 			}
 		});
-	})
+	});
 
 router.route('/reactions/post/:postid')
 	.get(function(req, res) {
@@ -78,7 +78,7 @@ router.route('/reactions/post/:postid')
 				return res.send(result.rows);
 			}
 		});
-	})
+	});
 
 
 module.exports = router;

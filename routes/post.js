@@ -20,7 +20,7 @@ router.route('/posts')
 				return res.send(result.rows);
 			}
 		});
-	})
+	});
 
 router.route('/post')
 	.post(function(req, res) {
@@ -54,7 +54,7 @@ router.route('/post/:postid')
 				return res.send(result.rows);
 			}
 		});
-	})
+	});
 
 router.route('/posts/user/:userid')
 	.get(function(req, res) {
@@ -70,33 +70,24 @@ router.route('/posts/user/:userid')
 				return res.send(result.rows);
 			}
 		});
-	})
+	});
 
 router.route('/posts/following/:userid')
 	.get(function(req, res) {
-		User.findById(req.params.userid)
-        .exec(function (err, user) {
-            if (err) {
-                return res.send(err);
-            }
-            if (user) {
-                Post.find()
-                .where('user').in(user.following)
-                .populate('reactions', 'username reaction created')
-                .populate('user', 'username fullname')
-				.exec(function(err, posts) {
-					if (err) {
-						return res.send(err);
-					}
+		var queryString = postQuery("INNER JOIN Followers ON Followers.fk_followinguserid=Users.pk_userid\n" + 
+						"WHERE Followers.fk_followeruserid = $1");
 
-					res.send(posts);
-				});
-            }
-            else {
-            	res.status(403).send({ message : "user not found" });
-            }
-        });
-	})
+		pgquery.query(queryString, [req.params.userid], function(err, result){
+			if (err) {
+				console.log(err);
+				console.log(queryString);
+				return res.status(500).send(err);
+			}
+			else {
+				return res.send(result.rows);
+			}
+		});
+	});
 
 function postQuery(additionalQuery) {
 	if (additionalQuery == null) {
