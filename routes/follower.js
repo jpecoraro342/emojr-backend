@@ -67,7 +67,7 @@ router.route('/follow')
             }
             else {
                 return res.send(result.rows[0]);
-            }
+            }g
         });
 	})
     .delete(function(req, res) {
@@ -80,7 +80,7 @@ router.route('/follow')
                 return res.status(500).send(err);
             }
             else {
-                return res.send(result.rows[0]);
+                return res.send({success: true});
             }
         });
     })
