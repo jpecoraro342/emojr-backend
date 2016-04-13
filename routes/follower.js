@@ -71,6 +71,8 @@ router.route('/follow')
         });
 	})
     .delete(function(req, res) {
+        console.log(req.body);
+
         var queryString = "DELETE FROM Followers\n" +  
                         "WHERE Followers.fk_followeruserid=$1 AND Followers.fk_followinguserid=$2;";
 
