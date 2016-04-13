@@ -71,12 +71,10 @@ router.route('/follow')
         });
 	})
     .delete(function(req, res) {
-        console.log(req.body);
-
         var queryString = "DELETE FROM Followers\n" +  
                         "WHERE Followers.fk_followeruserid=$1 AND Followers.fk_followinguserid=$2;";
 
-        pgquery.query(queryString, [req.body.followerUserId, req.body.followingUserId], function(err, result){
+        pgquery.query(queryString, [req.query.followerUserId, req.query.followingUserId], function(err, result){
             if (err) {
                 console.log(err);
                 return res.status(500).send(err);
