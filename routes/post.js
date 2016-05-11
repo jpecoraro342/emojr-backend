@@ -100,7 +100,7 @@ router.route('/posts/following/:userid')
 
 		var queryString = postQuery(additionalQuery);
 
-		pgquery.query(queryString, [req.params.userid], function(err, result){
+		pgquery.query(queryString, sqlparams, function(err, result){
 			if (err) {
 				console.log(err);
 				console.log(queryString);
