@@ -7,9 +7,17 @@ var router = express.Router();
 
 router.route('/posts')
 	.get(function(req, res) {
-		var queryString = postQuery();
+		var dateClause = null;
+		var sqlparams = [];
 
-		pgquery.query(queryString, null, function(err, result){
+		if (req.query.fromDate != null) {
+			dateClause = dateClauseGreaterThanWithParamNum(1);
+			sqlparams = [new Date(req.query.fromDate)];
+		}
+
+		var queryString = postQuery(dateClause);
+
+		pgquery.query(queryString, sqlparams, function(err, result){
 			if (err) {
 				console.log(err);
 				console.log(queryString);
@@ -57,9 +65,17 @@ router.route('/post/:postid')
 
 router.route('/posts/user/:userid')
 	.get(function(req, res) {
-		var queryString = postQuery("WHERE Posts.fk_userid=$1");
+		var additionalQuery = "WHERE Posts.fk_userid=$1";
+		var sqlparams = [req.params.userid];
 
-		pgquery.query(queryString, [req.params.userid], function(err, result){
+		if (req.query.fromDate != null) {
+			additionalQuery = additionalQuery + " " + dateClauseGreaterThanWithParamNum(2);
+			sqlparams.push(new Date(req.query.fromDate));
+		}
+
+		var queryString = postQuery(additionalQuery);
+
+		pgquery.query(queryString, sqlparams, function(err, result){
 			if (err) {
 				console.log(err);
 				console.log(queryString);
@@ -73,8 +89,16 @@ router.route('/posts/user/:userid')
 
 router.route('/posts/following/:userid')
 	.get(function(req, res) {
-		var queryString = postQuery("INNER JOIN Followers ON Followers.fk_followinguserid=Users.pk_userid\n" + 
-						"WHERE Followers.fk_followeruserid = $1");
+		var additionalQuery = "INNER JOIN Followers ON Followers.fk_followinguserid=Users.pk_userid\n" + 
+						"WHERE Followers.fk_followeruserid = $1";
+		var sqlparams = [req.params.userid];
+
+		if (req.query.fromDate != null) {
+			additionalQuery = additionalQuery + " " + dateClauseGreaterThanWithParamNum(2);
+			sqlparams.push(new Date(req.query.fromDate));
+		}
+
+		var queryString = postQuery(additionalQuery);
 
 		pgquery.query(queryString, [req.params.userid], function(err, result){
 			if (err) {
@@ -107,7 +131,18 @@ function basePostsQuery() {
 }
 
 function postGrouping() {
-	return "GROUP BY Posts.pk_postid, Users.pk_userid, Users.username";
+	return "GROUP BY Posts.pk_postid, Users.pk_userid, Users.username\n" +
+		"ORDER BY Posts.created DESC\n" + 
+		"LIMIT 100";
+}
+
+function dateClauseGreaterThanWithParamNum(paramNum) {
+	if (paramNum > 1) {
+		return "AND Posts.created < $" + paramNum;
+	}
+	else {
+		return "WHERE Posts.created < $" + paramNum;
+	}
 }
 
 

@@ -11,9 +11,9 @@ SELECT Users.pk_userid, Users.username, Users.userfullname FROM Users;
 
 -- Get All Posts
 SELECT Users.pk_userid, Users.username, Posts.pk_postid, Posts.post, Posts.created, Posts.lastmodified,
-COALESCE(
-json_agg((SELECT r FROM (SELECT Reactions.pk_reactionid, Reactions.reaction) r))
-FILTER (WHERE Reactions.pk_reactionid IS NOT NULL), '[]') as reactions
+	COALESCE(
+		json_agg((SELECT r FROM (SELECT Reactions.pk_reactionid, Reactions.reaction) r))
+		FILTER (WHERE Reactions.pk_reactionid IS NOT NULL), '[]') as reactions
 FROM Posts
 LEFT JOIN Reactions ON Posts.pk_postid = Reactions.fk_postid
 INNER JOIN Users ON Posts.fk_userid = Users.pk_userid
