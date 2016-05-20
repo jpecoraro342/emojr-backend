@@ -34,7 +34,7 @@ router.route('/post')
 		var post = new Post(req.body);
 		var queryString = "INSERT INTO Posts (fk_userid, post)\n" + 
 						"VALUES ($1, $2)\n" + 
-						"RETURNING Posts.pk_postid, Posts.fk_userid, Posts.post;"
+						"RETURNING Posts.pk_postid, Posts.fk_userid, Posts.post Posts.created;"
 		
 		pgquery.query(queryString, [post.fk_userid, post.post], function(err, result){
 			if (err) {
