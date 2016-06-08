@@ -10,10 +10,9 @@ router.route('/users')
 		var queryString = "SELECT Users.pk_userid, Users.username, Users.userfullname FROM Users\n";
 
 		if (req.query.searchString != null) {
-			queryString = queryString + "WHERE Users.username LIKE '$1::text%'\n"; 
+			queryString = queryString + "WHERE Users.username LIKE '' || $1::text || '%'\n"; 
 			queryParams = [req.query.searchString]
 		}
-
 		queryString = queryString + "LIMIT 100;";
 
 		pgquery.query(queryString, queryParams, function(err, result){

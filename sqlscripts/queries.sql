@@ -57,5 +57,5 @@ WHERE Followers.fk_followeruserid=1 AND Followers.fk_followinguserid=2;
 
 SELECT Users.username
 FROM Users
-Where Users.username LIKE '💩%'
+Where Users.username LIKE '' || 💩 || '%'
 LIMIT 100;
