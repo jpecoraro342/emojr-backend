@@ -10,7 +10,7 @@ router.route('/users')
 		var queryString = "SELECT Users.pk_userid, Users.username, Users.userfullname FROM Users ";
 
 		if (req.query.searchString != null) {
-			queryString += "WHERE Users.username LIKE '$1%'"; 
+			queryString += "WHERE Users.username LIKE '$1::text%'"; 
 			queryParams = [req.query.searchString]
 		}
 
