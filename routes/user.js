@@ -5,9 +5,18 @@ var router = express.Router();
 
 router.route('/users')
 	.get(function(req, res) {
-		var queryString = "SELECT Users.pk_userid, Users.username, Users.userfullname FROM Users;";
+		var queryParams = null;
 
-		pgquery.query(queryString, null, function(err, result){
+		var queryString = "SELECT Users.pk_userid, Users.username, Users.userfullname FROM Users ";
+
+		if (req.query.searchString != null) {
+			queryString += "WHERE Users.username LIKE '$1%'"; 
+			queryParams = [req.query.searchString]
+		}
+
+		queryString += "LIMIT 100;";
+
+		pgquery.query(queryString, queryParams, function(err, result){
 			if (err) {
 				console.log(err);
 				return res.status(500).send(err);

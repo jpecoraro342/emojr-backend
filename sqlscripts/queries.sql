@@ -44,3 +44,18 @@ INNER JOIN Users ON Posts.fk_userid = Users.pk_userid
 INNER JOIN Followers ON Followers.fk_followinguserid=Users.pk_userid
 WHERE Followers.fk_followeruserid = 9
 GROUP BY Posts.pk_postid, Users.pk_userid, Users.username;
+
+
+SELECT Users.pk_userid, Users.username, Users.userfullname
+FROM Followers
+INNER JOIN Users
+ON Followers.fk_followinguserid=Users.pk_userid\n
+WHERE Followers.fk_followeruserid=2
+
+DELETE FROM Followers
+WHERE Followers.fk_followeruserid=1 AND Followers.fk_followinguserid=2;
+
+SELECT Users.username
+FROM Users
+Where Users.username LIKE '💩%'
+LIMIT 100;
