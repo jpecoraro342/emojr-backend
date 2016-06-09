@@ -63,6 +63,22 @@ router.route('/post/:postid')
 		});
 	});
 
+router.route('/posts/discover')
+	.get(function(req, res) {
+		var queryString = "SELECT * FROM vw_DiscoverPosts\nLIMIT 100;";
+
+		pgquery.query(queryString, null, function(err, result){
+			if (err) {
+				console.log(err);
+				console.log(queryString);
+				return res.status(500).send(err);
+			}
+			else {
+				return res.send(result.rows);
+			}
+		});
+	});
+
 router.route('/posts/user/:userid')
 	.get(function(req, res) {
 		var additionalQuery = "WHERE Posts.fk_userid=$1";

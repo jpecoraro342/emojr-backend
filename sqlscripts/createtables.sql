@@ -59,6 +59,20 @@ CREATE TABLE IF NOT EXISTS UserRoles (
   LastModified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE VIEW vw_PostsAggregate AS 
+SELECT Users.pk_userid, Users.username, Posts.pk_postid, Posts.post, Posts.created, Posts.lastmodified,
+  COALESCE(
+    json_agg((SELECT r FROM (SELECT Reactions.pk_reactionid, Reactions.reaction) r))
+    FILTER (WHERE Reactions.pk_reactionid IS NOT NULL), '[]') as reactions
+FROM Posts
+LEFT JOIN Reactions ON Posts.pk_postid = Reactions.fk_postid
+INNER JOIN Users ON Posts.fk_userid = Users.pk_userid
+GROUP BY Posts.pk_postid, Users.pk_userid, Users.username;
+
+CREATE VIEW vw_DiscoverPosts AS
+SELECT * FROM vw_PostsAggregate
+ORDER BY created DESC;
+
 /*
 CREATE OR REPLACE FUNCTION update_modified_column()	
 RETURNS TRIGGER AS $$

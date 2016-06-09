@@ -4,4 +4,3 @@ DROP TABLE Roles;
 DROP TABLE Reactions;
 DROP TABLE Posts;
 DROP TABLE Users;
-
