@@ -65,9 +65,17 @@ router.route('/post/:postid')
 
 router.route('/posts/discover')
 	.get(function(req, res) {
-		var queryString = "SELECT * FROM vw_DiscoverPosts\nLIMIT 100;";
+		var queryParams = null;
 
-		pgquery.query(queryString, null, function(err, result){
+		var queryString = "SELECT * FROM vw_DiscoverPosts\n";
+
+		if (req.query.userId != null) {
+			queryString = queryString + "WHERE pk_userid <> $1::int\n"; 
+			queryParams = [req.query.userId]
+		}
+		queryString = queryString + "LIMIT 100;";
+
+		pgquery.query(queryString, queryParams, function(err, result){
 			if (err) {
 				console.log(err);
 				console.log(queryString);

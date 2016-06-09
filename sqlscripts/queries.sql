@@ -74,3 +74,5 @@ GROUP BY Posts.pk_postid, Users.pk_userid, Users.username;
 CREATE VIEW vw_DiscoverPosts AS
 SELECT * FROM vw_PostsAggregate
 ORDER BY created DESC;
+
+SELECT * FROM vw_DiscoverPosts WHERE pk_userid <> 2 LIMIT 100;
