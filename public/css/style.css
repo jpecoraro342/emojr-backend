@@ -15,7 +15,7 @@ body {
 }
 
 .signUpForm {
-    margin-top: 100px;
+  margin-top: 100px;
   margin-bottom: 30px;
 }
 
@@ -54,10 +54,14 @@ body {
   -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
   transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }
+.formControl:hover {
+  -webkit-box-shadow: 0 4px 6px rgba(0,0,0,.5) !important;
+  box-shadow: 0 4px 4px rgba(0,0,0,.5) !important;
+}
 .formControl:focus {
   border-color: #66afe9;
   outline: 0 none;
-  -webkit-box-shadow: 0 4px 4px rgba(0,0,0,.5) !important;
+  -webkit-box-shadow: 0 4px 6px rgba(0,0,0,.5) !important;
   box-shadow: 0 4px 4px rgba(0,0,0,.5) !important;
 }
 .formControl::-moz-placeholder {
