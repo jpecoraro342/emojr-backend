@@ -79,9 +79,11 @@ router.route('/posts/discover')
 			if (err) {
 				console.log(err);
 				console.log(queryString);
+				console.log(res)
 				return res.status(500).send(err);
 			}
 			else {
+				console.log(res)
 				return res.send(result.rows);
 			}
 		});
