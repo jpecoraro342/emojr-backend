@@ -7,7 +7,7 @@ router.route('/users')
 	.get(function(req, res) {
 		var queryParams = null;
 
-		var queryString = "SELECT Users.pk_userid, Users.username, Users.userfullname FROM Users\n";
+		var queryString = "SELECT Users.pk_userid, Users.username FROM Users\n";
 
 		if (req.query.searchString != null) {
 			queryString = queryString + "WHERE Users.username LIKE '' || $1::text || '%'\n"; 
@@ -29,13 +29,13 @@ router.route('/users')
 router.route('/user')
 	.post(function(req, res) {
 		var user = new User(req.body);
-		var queryString = "INSERT INTO Users (username, userfullname, password, salt)\n" + 
+		var queryString = "INSERT INTO Users (username, password, salt)\n" + 
 		"VALUES ($1::text, $2::text, $3::text, $4::text)\n" + 
-		"RETURNING Users.pk_userid, Users.username, Users.userfullname;"
+		"RETURNING Users.pk_userid, Users.username;"
 		
 		user.presave();
 
-		pgquery.query(queryString, [user.username, user.userfullname, user.password, user.salt], function(err, result){
+		pgquery.query(queryString, [user.username, user.password, user.salt], function(err, result){
 			if (err) {
 				console.log(err);
 				return res.status(500).send(err);
@@ -66,13 +66,13 @@ router.route('/user/available')
 router.route('/user/signup')
 	.post(function(req, res) {
 		var user = new User(req.body);
-		var queryString = "INSERT INTO Users (username, userfullname, password, salt)\n" + 
+		var queryString = "INSERT INTO Users (username, password, salt)\n" + 
 		"VALUES ($1::text, $2::text, $3::text, $4::text)\n" + 
-		"RETURNING Users.pk_userid, Users.username, Users.userfullname;";
+		"RETURNING Users.pk_userid, Users.username;";
 		
 		user.presave();
 
-		pgquery.query(queryString, [user.username, user.userfullname, user.password, user.salt], function(err, result){
+		pgquery.query(queryString, [user.username, user.password, user.salt], function(err, result){
 			if (err) {
 				err.error = err.toString();
 				console.log(err);

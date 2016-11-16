@@ -5,7 +5,7 @@ var router = express.Router();
 
 router.route('/following/:userid')
 	.get(function(req, res) {
-		var queryString = "SELECT Users.pk_userid, Users.username, Users.userfullname\n" +  
+		var queryString = "SELECT Users.pk_userid, Users.username\n" +  
                         "FROM Followers\n" + 
                         "INNER JOIN Users\n" + 
                         "ON Followers.fk_followinguserid=Users.pk_userid\n" +
@@ -24,7 +24,7 @@ router.route('/following/:userid')
 
 router.route('/followers/:userid')
 	.get(function(req, res) {
-		var queryString = "SELECT Users.pk_userid, Users.username, Users.userfullname\n" +  
+		var queryString = "SELECT Users.pk_userid, Users.username\n" +  
                         "FROM Followers\n" + 
                         "INNER JOIN Users\n" + 
                         "ON Followers.fk_followeruserid=Users.pk_userid\n" +

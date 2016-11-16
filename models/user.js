@@ -3,18 +3,12 @@
 let crypto = require('crypto');
 let validator = require('validator');
 
-
 function User(attributes) {
     this.pk_userid = attributes.pk_userid;
     this.username = attributes.username;
-    this.userfullname = attributes.userfullname;
     this.password = attributes.password;
     this.salt = attributes.salt;
     this.email = attributes.email;
-
-    if (this.userfullname == null) {
-        this.userfullname = attributes.fullname;
-    }
 }
 
 User.prototype.presave = function() {

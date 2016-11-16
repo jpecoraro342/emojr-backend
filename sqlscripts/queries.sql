@@ -1,11 +1,11 @@
 /* User Queries */
 
-INSERT INTO Users (username, userfullname, password, salt) 
-VALUES ('testuser', 'user actual name', 'pass', 'salt')
-RETURNING Users.pk_userid, Users.username, Users.userfullname;
+INSERT INTO Users (username, password, salt) 
+VALUES ('testuser', 'pass', 'salt')
+RETURNING Users.pk_userid, Users.username;
 
 -- select all Users
-SELECT Users.pk_userid, Users.username, Users.userfullname FROM Users;
+SELECT Users.pk_userid, Users.username FROM Users;
 
 /* Post Queries */
 
@@ -29,7 +29,7 @@ WHERE Posts.pk_postid=2
 GROUP BY Posts.pk_postid, Users.pk_userid, Users.username;
 
 
-SELECT Users.pk_userid, Users.username, Users.userfullname 
+SELECT Users.pk_userid, Users.username
 FROM Followers
 INNER JOIN Users
 ON Followers.fk_followinguserid=Users.pk_userid
@@ -46,7 +46,7 @@ WHERE Followers.fk_followeruserid = 9
 GROUP BY Posts.pk_postid, Users.pk_userid, Users.username;
 
 
-SELECT Users.pk_userid, Users.username, Users.userfullname
+SELECT Users.pk_userid, Users.username
 FROM Followers
 INNER JOIN Users
 ON Followers.fk_followinguserid=Users.pk_userid\n
