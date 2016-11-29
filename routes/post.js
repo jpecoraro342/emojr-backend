@@ -20,7 +20,6 @@ router.route('/posts')
 		pgquery.query(queryString, sqlparams, function(err, result){
 			if (err) {
 				console.log(err);
-				console.log(queryString);
 				return res.status(500).send(err);
 			}
 			else {
@@ -54,7 +53,6 @@ router.route('/post/:postid')
 		pgquery.query(queryString, [req.params.postid], function(err, result){
 			if (err) {
 				console.log(err);
-				console.log(queryString);
 				return res.status(500).send(err);
 			}
 			else {
@@ -78,7 +76,6 @@ router.route('/posts/discover')
 		pgquery.query(queryString, queryParams, function(err, result){
 			if (err) {
 				console.log(err);
-				console.log(queryString);
 				return res.status(500).send(err);
 			}
 			else {
@@ -102,7 +99,6 @@ router.route('/posts/user/:userid')
 		pgquery.query(queryString, sqlparams, function(err, result){
 			if (err) {
 				console.log(err);
-				console.log(queryString);
 				return res.status(500).send(err);
 			}
 			else {
@@ -127,7 +123,6 @@ router.route('/posts/following/:userid')
 		pgquery.query(queryString, sqlparams, function(err, result){
 			if (err) {
 				console.log(err);
-				console.log(queryString);
 				return res.status(500).send(err);
 			}
 			else {
@@ -168,6 +163,5 @@ function dateClauseGreaterThanWithParamNum(paramNum) {
 		return "WHERE Posts.created < $" + paramNum;
 	}
 }
-
 
 module.exports = router;

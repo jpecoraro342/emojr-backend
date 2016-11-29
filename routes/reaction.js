@@ -80,5 +80,4 @@ router.route('/reactions/post/:postid')
 		});
 	});
 
-
 module.exports = router;

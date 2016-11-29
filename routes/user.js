@@ -74,7 +74,6 @@ router.route('/user/signup')
 
 		pgquery.query(queryString, [user.username, user.password, user.salt], function(err, result){
 			if (err) {
-				err.error = err.toString();
 				console.log(err);
 				return res.status(500).send(err);
 			}

@@ -25,8 +25,6 @@ app.use(express.static(__dirname + '/public'));
 
 module.exports = app;
 
-console.log("hey");
-
 app.listen(config.port, () => {
     console.log("Up and listening! go to http://localhost:3000");
 });
