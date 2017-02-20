@@ -73,6 +73,9 @@ router.route('/posts/discover')
 
 		var queryString = "SELECT * FROM vw_DiscoverPosts\n";
 
+		console.log('Query Parameters on request');
+		console.log(req.query);
+
 		if (req.query.userId != null) {
 			console.log('Discover posts: User ID was there')
 			queryString = queryString + "WHERE pk_userid <> $1::int"; 
