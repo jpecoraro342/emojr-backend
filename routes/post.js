@@ -69,17 +69,24 @@ router.route('/post/:postid')
 
 router.route('/posts/discover')
 	.get(function(req, res) {
-		var queryParams = null;
+		var sqlparams = null;
 
 		var queryString = "SELECT * FROM vw_DiscoverPosts\n";
 
 		if (req.query.userId != null) {
-			queryString = queryString + "WHERE pk_userid <> $1::int\n"; 
-			queryParams = [req.query.userId]
+			queryString = queryString + "WHERE pk_userid <> $1::int"; 
+			sqlparams = [req.query.userId]
 		}
-		queryString = queryString + "LIMIT 100;";
 
-		pgquery.query(queryString, queryParams, function(err, result){
+		if (req.query.fromDate != null) {
+			dateClause = dateClauseGreaterThanWithParamNum(1);
+			sqlparams = [new Date(req.query.fromDate)];
+			queryString = queryString + " " + dateClause;
+		}
+
+		queryString = queryString + "\nLIMIT 100;";
+
+		pgquery.query(queryString, sqlparams, function(err, result){
 			if (err) {
 				console.log('Error getting discover:');
 				console.log(err);
