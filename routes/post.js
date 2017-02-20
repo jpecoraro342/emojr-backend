@@ -101,11 +101,11 @@ router.route('/posts/discover/:lastcreateddate')
 	.get(function(req, res) {
 		var sqlparams = [];
 
-		var queryString = "SELECT * FROM vw_DiscoverPosts\n";
+		var queryString = "SELECT * FROM vw_DiscoverPosts";
 
 		dateClause = dateClauseGreaterThanWithParamNum(1);
 		sqlparams.push(new Date(req.params.lastcreateddate));
-		queryString = queryString + dateClause;
+		queryString = queryString + " " + dateClause;
 
 		queryString = queryString + "\nLIMIT 100;";
 
