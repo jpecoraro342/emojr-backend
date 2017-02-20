@@ -147,6 +147,30 @@ router.route('/posts/user/:userid')
 		});
 	});
 
+router.route('/posts/user/:userid/:lastcreateddate')
+	.get(function(req, res) {
+		var additionalQuery = "WHERE Posts.fk_userid=$1";
+		var sqlparams = [req.params.userid];
+
+		dateClause = dateClauseGreaterThanWithParamNum(2);
+		sqlparams.push(new Date(req.params.lastcreateddate));
+		additionalQuery = additionalQuery + " " + dateClause;
+
+		var queryString = postQuery(additionalQuery);
+
+		pgquery.query(queryString, sqlparams, function(err, result){
+			if (err) {
+				console.log('Error getting user posts');
+				console.log(err);
+				return res.status(500).send(err);
+			}
+			else {
+				console.log('Success getting user posts!');
+				return res.send(result.rows);
+			}
+		});
+	});
+
 router.route('/posts/following/:userid')
 	.get(function(req, res) {
 		var additionalQuery = "INNER JOIN Followers ON Followers.fk_followinguserid=Users.pk_userid\n" + 
@@ -157,6 +181,31 @@ router.route('/posts/following/:userid')
 			additionalQuery = additionalQuery + " " + dateClauseGreaterThanWithParamNum(2);
 			sqlparams.push(new Date(req.query.fromDate));
 		}
+
+		var queryString = postQuery(additionalQuery);
+
+		pgquery.query(queryString, sqlparams, function(err, result){
+			if (err) {
+				console.log('Error getting following:');
+				console.log(err);
+				return res.status(500).send(err);
+			}
+			else {
+				console.log('Success getting following!');
+				return res.send(result.rows);
+			}
+		});
+	});
+
+router.route('/posts/following/:userid/:lastcreateddate')
+	.get(function(req, res) {
+		var additionalQuery = "INNER JOIN Followers ON Followers.fk_followinguserid=Users.pk_userid\n" + 
+						"WHERE Followers.fk_followeruserid = $1";
+		var sqlparams = [req.params.userid];
+
+		dateClause = dateClauseGreaterThanWithParamNum(2);
+		sqlparams.push(new Date(req.params.lastcreateddate));
+		additionalQuery = additionalQuery + " " + dateClause;
 
 		var queryString = postQuery(additionalQuery);
 
