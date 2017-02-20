@@ -30,7 +30,7 @@ router.route('/user')
 	.post(function(req, res) {
 		var user = new User(req.body);
 		var queryString = "INSERT INTO Users (username, password, salt)\n" + 
-		"VALUES ($1::text, $2::text, $3::text, $4::text)\n" + 
+		"VALUES ($1::text, $2::text, $3::text)\n" + 
 		"RETURNING Users.pk_userid, Users.username;"
 		
 		user.presave();
@@ -67,7 +67,7 @@ router.route('/user/signup')
 	.post(function(req, res) {
 		var user = new User(req.body);
 		var queryString = "INSERT INTO Users (username, password, salt)\n" + 
-		"VALUES ($1::text, $2::text, $3::text, $4::text)\n" + 
+		"VALUES ($1::text, $2::text, $3::text)\n" + 
 		"RETURNING Users.pk_userid, Users.username;";
 		
 		user.presave();

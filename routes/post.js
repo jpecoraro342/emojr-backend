@@ -19,10 +19,12 @@ router.route('/posts')
 
 		pgquery.query(queryString, sqlparams, function(err, result){
 			if (err) {
+				console.log('Error getting posts:');
 				console.log(err);
 				return res.status(500).send(err);
 			}
 			else {
+				console.log('Success getting posts!');
 				return res.send(result.rows);
 			}
 		});
@@ -37,10 +39,12 @@ router.route('/post')
 		
 		pgquery.query(queryString, [post.fk_userid, post.post], function(err, result){
 			if (err) {
+				console.log('Error posting post:');
 				console.log(err);
 				return res.status(500).send(err);
 			}
 			else {
+				console.log('Success posting post!');
 				return res.send(result.rows[0]);
 			}
 		});
@@ -52,10 +56,12 @@ router.route('/post/:postid')
 
 		pgquery.query(queryString, [req.params.postid], function(err, result){
 			if (err) {
+				console.log('Error getting post:');
 				console.log(err);
 				return res.status(500).send(err);
 			}
 			else {
+				console.log('Success getting post!');
 				return res.send(result.rows);
 			}
 		});
@@ -75,10 +81,12 @@ router.route('/posts/discover')
 
 		pgquery.query(queryString, queryParams, function(err, result){
 			if (err) {
+				console.log('Error getting discover:');
 				console.log(err);
 				return res.status(500).send(err);
 			}
 			else {
+				console.log('Success getting discover!');
 				return res.send(result.rows);
 			}
 		});
@@ -98,10 +106,12 @@ router.route('/posts/user/:userid')
 
 		pgquery.query(queryString, sqlparams, function(err, result){
 			if (err) {
+				console.log('Error getting user posts');
 				console.log(err);
 				return res.status(500).send(err);
 			}
 			else {
+				console.log('Success getting user posts!');
 				return res.send(result.rows);
 			}
 		});
@@ -122,10 +132,12 @@ router.route('/posts/following/:userid')
 
 		pgquery.query(queryString, sqlparams, function(err, result){
 			if (err) {
+				console.log('Error getting following:');
 				console.log(err);
 				return res.status(500).send(err);
 			}
 			else {
+				console.log('Success getting following!');
 				return res.send(result.rows);
 			}
 		});
