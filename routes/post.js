@@ -45,7 +45,6 @@ router.route('/post')
 			}
 			else {
 				console.log('Success posting post!');
-				console.log(result)
 				return res.send(result.rows[0]);
 			}
 		});
@@ -105,9 +104,7 @@ router.route('/posts/discover/:lastcreateddate')
 		var queryString = "SELECT * FROM vw_DiscoverPosts\n";
 
 		dateClause = dateClauseGreaterThanWithParamNum(1);
-		console.log('fromDate');
-		console.log(req.query.fromDate);
-		sqlparams.push(new Date(req.query.fromDate));
+		sqlparams.push(new Date(req.params.fromDate));
 		queryString = queryString + " " + dateClause;
 
 		queryString = queryString + "\nLIMIT 100;";
