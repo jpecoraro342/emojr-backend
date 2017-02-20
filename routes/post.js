@@ -82,15 +82,30 @@ router.route('/posts/discover')
 			sqlparams = [req.query.userId]
 		}
 
-		if (req.query.fromDate != null) {
-			console.log('Discover posts: From Date was there')
-			var paramNum = 1;
-			if (req.query.userId != null) { paramNum = 2; }
+		queryString = queryString + "\nLIMIT 100;";
 
-			dateClause = dateClauseGreaterThanWithParamNum(paramNum);
-			sqlparams.push(new Date(req.query.fromDate));
-			queryString = queryString + " " + dateClause;
-		}
+		pgquery.query(queryString, sqlparams, function(err, result){
+			if (err) {
+				console.log('Error getting discover:');
+				console.log(err);
+				return res.status(500).send(err);
+			}
+			else {
+				console.log('Success getting discover!');
+				return res.send(result.rows);
+			}
+		});
+	});
+
+router.route('/posts/discover/:lastcreateddate')
+	.get(function(req, res) {
+		var sqlparams = [];
+
+		var queryString = "SELECT * FROM vw_DiscoverPosts\n";
+
+		dateClause = dateClauseGreaterThanWithParamNum(1);
+		sqlparams.push(new Date(req.query.fromDate));
+		queryString = queryString + " " + dateClause;
 
 		queryString = queryString + "\nLIMIT 100;";
 
