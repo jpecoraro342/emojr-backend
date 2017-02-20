@@ -69,18 +69,23 @@ router.route('/post/:postid')
 
 router.route('/posts/discover')
 	.get(function(req, res) {
-		var sqlparams = null;
+		var sqlparams = [];
 
 		var queryString = "SELECT * FROM vw_DiscoverPosts\n";
 
 		if (req.query.userId != null) {
+			console.log('Discover posts: User ID was there')
 			queryString = queryString + "WHERE pk_userid <> $1::int"; 
 			sqlparams = [req.query.userId]
 		}
 
 		if (req.query.fromDate != null) {
-			dateClause = dateClauseGreaterThanWithParamNum(1);
-			sqlparams = [new Date(req.query.fromDate)];
+			console.log('Discover posts: From Date was there')
+			var paramNum = 1;
+			if (req.query.userId != null) { paramNum = 2; }
+
+			dateClause = dateClauseGreaterThanWithParamNum(paramNum);
+			sqlparams.push(new Date(req.query.fromDate));
 			queryString = queryString + " " + dateClause;
 		}
 
