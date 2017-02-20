@@ -105,7 +105,7 @@ router.route('/posts/discover/:lastcreateddate')
 
 		dateClause = dateClauseGreaterThanWithParamNum(1);
 		sqlparams.push(new Date(req.params.lastcreateddate));
-		queryString = queryString + " " + dateClause;
+		queryString = queryString + dateClause;
 
 		queryString = queryString + "\nLIMIT 100;";
 
