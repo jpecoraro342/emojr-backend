@@ -199,10 +199,10 @@ function postGrouping() {
 
 function dateClauseGreaterThanWithParamNum(paramNum) {
 	if (paramNum > 1) {
-		return "AND Posts.created < $" + paramNum;
+		return "AND created < $" + paramNum;
 	}
 	else {
-		return "WHERE Posts.created < $" + paramNum;
+		return "WHERE created < $" + paramNum;
 	}
 }
 
